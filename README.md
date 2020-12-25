@@ -14,7 +14,7 @@ For large files, use the 64-bit version of the program included in the release, 
 
 # Releases
 
-None.
+[1.0R](https://github.com/exom-dev/zero/releases/tag/1.0) - December 25th, 2020
 
 # License <a href="https://github.com/exom-dev/zero/blob/master/LICENSE"><img align="right" src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
 
