@@ -10,7 +10,7 @@
 #endif
 
 #if defined(_WIN32)
-    #define _CRT_SECURE_NO_WARNINGS  // Disable annoying 'unsafe' warnings (expert mode = on).
+    #define _CRT_SECURE_NO_WARNINGS // Disable annoying 'unsafe' warnings (we know what we're doing and we're not handling sensitive data).
 #elif defined(__unix__)
     #if defined(BIT_64)
         #define _FILE_OFFSET_BITS 64 // Make off_t be 64-bit.
