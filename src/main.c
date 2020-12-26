@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 // The file size type, either 32-bit or 64-bit (__int64, off_t, or int64_t).
 #if defined(BIT_32)
@@ -57,6 +58,9 @@ void format_size(SIZE_TYPE size, char* dest);
 int main(int argc, char** argv) {
     FILE* file;
     int confirm;
+    int argIndex;
+
+    bool force = false;
 
     char buffer[BUFFER_SIZE];               // For the zeros.
     char fmtBuffer[FORMATTING_BUFFER_SIZE]; // For the formatted file size.
@@ -64,12 +68,19 @@ int main(int argc, char** argv) {
     SIZE_TYPE size;
     SIZE_TYPE passes;
 
-    if(argc != 2) {
-        fprintf(stderr, "Usage: %s <FILE>\n", argv[0]);
+    if(argc < 2) {
+        fprintf(stderr, "Usage: %s [-f, --force] <FILE>\n", argv[0]);
         return 1;
     }
 
-    file = fopen(argv[1], "rb+");
+    // Leave room for future arguments.
+    for(argIndex = 1; argIndex < argc; ++argIndex) {
+        if(strcmp(argv[argIndex], "-f") == 0 || strcmp(argv[argIndex], "--force") == 0)
+            force = true;
+        else break;
+    }
+
+    file = fopen(argv[argIndex], "rb+");
 
     if(!file) {
         io_error(MSG_ERROR_OPEN);
@@ -126,22 +137,26 @@ int main(int argc, char** argv) {
         #endif
     #endif
 
-    format_size(size, fmtBuffer);
+    if(!force) {
+        format_size(size, fmtBuffer);
 
-    printf("File size is %s bytes\n", fmtBuffer);
+        printf("File size is %s bytes\n", fmtBuffer);
 
-    printf("Are you sure? (Y/N) ");
+        printf("Are you sure? (Y/N) ");
 
-    if(EOF == (confirm = getchar())) {
-        io_error(MSG_ERROR_CONFIRM);
-        return 1;
+        if(EOF == (confirm = getchar())) {
+            io_error(MSG_ERROR_CONFIRM);
+            return 1;
+        }
+
+        if(confirm != 'y' && confirm != 'Y') {
+            fclose(file);
+            goto _end;
+        }
+
+        printf("Confirmed -- overwriting with zeros...");
+        fflush(stdout);
     }
-
-    if(confirm != 'y' && confirm != 'Y')
-        goto _end;
-
-    printf("Confirmed -- overwriting with zeros...");
-    fflush(stdout);
 
     memset(buffer, 0, BUFFER_SIZE);
 
@@ -165,13 +180,18 @@ int main(int argc, char** argv) {
         }
     }
 
-    // Truncate.
-    freopen(argv[1], "w", file);
+    fclose(file);
 
-    printf("done\n");
+    if(0 != remove(argv[argIndex])) {
+        fprintf(stderr, "Cannot delete file\n");
+        return 1;
+    }
+
+    if(!force) {
+        printf("done\n");
+    }
 
 _end:
-    fclose(file);
     return 0;
 
 _error:
