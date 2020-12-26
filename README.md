@@ -5,14 +5,20 @@
 # Usage
 
 ```shell
-zero <FIILE>
+zero [-f, --force] <FIILE>
 ```
 
-You will be prompted to confirm that you want to overwrite the file. After the overwriting process is done, the file will be truncated to zero bytes.
+You will be prompted to confirm that you want to overwrite the file.
 
-For large files, use the 64-bit version of the program included in the release, **zero64**.
+###### Options:
+
+- `-f` - skips the prompt and immediately starts overwriting the file
+
+After the overwriting process is done, the file will be automatically deleted. For large files, use the 64-bit version of the program included in the release, **zero64**.
 
 # Releases
+
+[1.1R](https://github.com/exom-dev/zero/releases/tag/v1.1R) - December 26th, 2020
 
 [1.0R](https://github.com/exom-dev/zero/releases/tag/v1.0R) - December 25th, 2020
 
