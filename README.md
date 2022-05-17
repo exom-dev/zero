@@ -5,7 +5,7 @@
 # Usage
 
 ```shell
-zero [-f, --force] <FIILE>
+zero [-f, --force] <FILE>
 ```
 
 You will be prompted to confirm that you want to overwrite the file.
